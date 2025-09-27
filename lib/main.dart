@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() {
   runApp(MyApp());
@@ -10,18 +11,23 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      theme: ThemeData(fontFamily: 'Vazirmatn'),
       debugShowCheckedModeBanner: false,
+      localizationsDelegates: [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: [
+        Locale('fa'), // Persion
+      ],
       home: Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.white,
           actions: [
             SizedBox(width: 16.0),
-            Expanded(
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Image.asset('assets/images/menu.png'),
-              ),
-            ),
+            Image.asset('assets/images/icon.png'),
+            SizedBox(width: 12),
             Align(
               alignment: Alignment.centerRight,
               child: Text(
@@ -29,8 +35,12 @@ class MyApp extends StatelessWidget {
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
               ),
             ),
-            SizedBox(width: 12),
-            Image.asset('assets/images/icon.png'),
+            Expanded(
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Image.asset('assets/images/menu.png'),
+              ),
+            ),
             SizedBox(width: 16.0),
           ],
         ),
@@ -39,8 +49,10 @@ class MyApp extends StatelessWidget {
           child: Column(
             children: [
               Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
+                  Image.asset('assets/images/q.png'),
+                  SizedBox(width: 12.0),
                   Text(
                     'نرخ ارز آزاد چیست؟ ',
                     style: TextStyle(
@@ -48,13 +60,12 @@ class MyApp extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  Image.asset('assets/images/q.png'),
                 ],
               ),
-              SizedBox(height: 12),
+              SizedBox(height: 20),
               Text(
                 ' نرخ ارزها در معاملات نقدی و رایج روزانه است معاملات نقدی معاملاتی هستند که خریدار و فروشنده به محض انجام معامله، ارز و ریال را با هم تبادل می نمایند.',
-                style: TextStyle(fontSize: 14),
+                style: TextStyle(fontSize: 14, color: Colors.black),
                 textDirection: TextDirection.rtl,
               ),
             ],

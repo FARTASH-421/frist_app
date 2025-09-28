@@ -133,50 +133,85 @@ class Home extends StatelessWidget {
               ),
             ),
 
-            Container(
+            SizedBox(
               height: 400,
               width: double.infinity,
               // color: Colors.lightBlueAccent,
-              child: ListView.builder(
+              child: ListView.separated(
+                separatorBuilder: (context, index) {
+                  return (index % 10 == 0) ? Add() : SizedBox.shrink();
+                },
                 physics: BouncingScrollPhysics(),
-                itemCount: 10,
+                itemCount: 25,
                 itemBuilder: (BuildContext context, int postion) {
                   return Padding(
-                    padding: const EdgeInsets.only(top: 8.0, right: 2, left: 2),
-                    child: Container(
-                      width: double.infinity,
-                      height: 50,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(30),
-                        color: Colors.white,
-                        boxShadow: <BoxShadow>[
-                          BoxShadow(color: Colors.grey, blurRadius: 4),
-                        ],
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          Text(
-                            "دلار",
-                            style: Theme.of(context).textTheme.bodyMedium,
-                          ),
-                          Text(
-                            "25000",
-                            style: Theme.of(context).textTheme.bodyMedium,
-                          ),
-                          Text(
-                            "+8",
-                            style: Theme.of(context).textTheme.bodyMedium,
-                          ),
-                        ],
-                      ),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 6,
+                      horizontal: 2,
                     ),
+                    child: MyItems(),
                   );
                 },
               ),
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class MyItems extends StatelessWidget {
+  const MyItems({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      height: 50,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(30),
+        color: Colors.white,
+        boxShadow: <BoxShadow>[BoxShadow(color: Colors.grey, blurRadius: 4)],
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          Text("دلار", style: Theme.of(context).textTheme.bodyMedium),
+          Text("25000", style: Theme.of(context).textTheme.bodyMedium),
+          Text("+8", style: Theme.of(context).textTheme.bodyMedium),
+        ],
+      ),
+    );
+  }
+}
+
+class Add extends StatelessWidget {
+  const Add({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      height: 120,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(15),
+        color: const Color.fromARGB(255, 255, 73, 73),
+        boxShadow: <BoxShadow>[BoxShadow(color: Colors.grey, blurRadius: 4)],
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          Text(
+            "تبلیغات شما اینجاست!",
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
+              color: Colors.white,
+            ),
+          ),
+          Image.asset('./assets/images/icon.png', scale: 0.4),
+        ],
       ),
     );
   }

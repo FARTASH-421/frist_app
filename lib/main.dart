@@ -1,5 +1,9 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:frist_app/Module/Currency.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert' as convert;
 
 void main() {
   runApp(MyApp());
@@ -40,11 +44,46 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class Home extends StatelessWidget {
+class Home extends StatefulWidget {
   const Home({super.key});
 
   @override
+  State<Home> createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
+  List<Currency> currency = [];
+
+  void getResponse() {
+    var url =
+        "https://sasansafari.com/flutter/api.php?access_key=flutter123456";
+    http.get(Uri.parse(url)).then((value) {
+      if (currency.isEmpty) {
+        if (value.statusCode == 200) {
+          List jsonList = convert.jsonDecode(value.body);
+          if (jsonList.isNotEmpty) {
+            for (var item in jsonList) {
+              setState(() {
+                Currency myCurr = Currency(
+                  id: item['id'],
+                  title: item['title'],
+                  price: item['price'],
+                  changes: item['changes'],
+                  status: item['status'],
+                );
+                currency.add(myCurr);
+              });
+            }
+          }
+        }
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+    getResponse();
+
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 243, 243, 243),
       appBar: AppBar(
@@ -134,24 +173,80 @@ class Home extends StatelessWidget {
             ),
 
             SizedBox(
-              height: 400,
+              height: 430,
               width: double.infinity,
-              // color: Colors.lightBlueAccent,
               child: ListView.separated(
                 separatorBuilder: (context, index) {
                   return (index % 10 == 0) ? Add() : SizedBox.shrink();
                 },
                 physics: BouncingScrollPhysics(),
-                itemCount: 25,
+                itemCount: currency.length,
                 itemBuilder: (BuildContext context, int postion) {
                   return Padding(
                     padding: const EdgeInsets.symmetric(
                       vertical: 6,
                       horizontal: 2,
                     ),
-                    child: MyItems(),
+                    child: MyItems(currency: currency[postion]),
                   );
                 },
+              ),
+            ),
+
+            Padding(
+              padding: const EdgeInsets.only(top: 18.0),
+              child: Container(
+                height: 50,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: Color.fromARGB(255, 232, 232, 232),
+                  borderRadius: BorderRadius.circular(100),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    SizedBox(
+                      height: double.infinity,
+                      child: TextButton.icon(
+                        style: ButtonStyle(
+                          backgroundColor: WidgetStateProperty.all(
+                            Color.fromARGB(255, 202, 195, 255),
+                          ),
+                          shape: WidgetStateProperty.all(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(100),
+                            ),
+                          ),
+                        ),
+                        onPressed: () =>
+                            _showSankBar(context, "در حال بروز رسانی..."),
+                        icon: Icon(
+                          CupertinoIcons.refresh_bold,
+                          color: Colors.black,
+                          size: 20,
+                        ),
+                        label: Padding(
+                          padding: const EdgeInsets.only(left: 8.0),
+                          child: Text(
+                            "بروز رسانی",
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 20.0),
+                      child: Text(
+                        "آخرین بروز رسانی ${_getTime()}",
+                        style: TextStyle(fontSize: 14.0),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
@@ -159,10 +254,28 @@ class Home extends StatelessWidget {
       ),
     );
   }
+
+  String _getTime() {
+    return "20:45";
+  }
+}
+
+void _showSankBar(BuildContext context, String message) {
+  final snackBar = SnackBar(
+    content: Text(
+      message,
+      style: TextStyle(fontSize: 14, fontWeight: FontWeight.w300),
+    ),
+    duration: Duration(seconds: 5),
+    backgroundColor: Colors.green,
+  );
+
+  ScaffoldMessenger.of(context).showSnackBar(snackBar);
 }
 
 class MyItems extends StatelessWidget {
-  const MyItems({super.key});
+  Currency currency;
+  MyItems({required this.currency, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -177,9 +290,17 @@ class MyItems extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          Text("دلار", style: Theme.of(context).textTheme.bodyMedium),
-          Text("25000", style: Theme.of(context).textTheme.bodyMedium),
-          Text("+8", style: Theme.of(context).textTheme.bodyMedium),
+          Text(currency.title, style: Theme.of(context).textTheme.bodyMedium),
+          Text(currency.price, style: Theme.of(context).textTheme.bodyMedium),
+          Text(
+            currency.changes,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w400,
+              color: currency.status == "p" ? Colors.green : Colors.red,
+            ),
+            textDirection: TextDirection.ltr,
+          ),
         ],
       ),
     );
